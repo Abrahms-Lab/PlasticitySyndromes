@@ -118,9 +118,6 @@ dist.fid.dhglm <- as.character("
 #############################
 # 2. Data prep and model fitting
 #############################
-load("full_model_dist_fid_dec23_v2.RData")
-
-
 obs_dist_data <- dist.fid.df %>% filter(behavior=='td')
 obs_fid_data <- dist.fid.df %>% filter(behavior=='sf')
 
