@@ -121,8 +121,6 @@ lay.dist.dhglm <- as.character("
 #############################
 # 2. Data prep and model fitting
 #############################
-load("full_model_lay_dist_dec23_v2.RData")
-
 obs_lay_data <- dist.fid.df %>% filter(behavior=='ld')
 obs_trip_data <- dist.fid.df %>% filter(behavior=='td')
 
