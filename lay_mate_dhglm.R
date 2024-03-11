@@ -133,8 +133,6 @@ lay.mate.dhglm <- as.character("
 #############################
 # 2. Data prep and model fitting
 #############################
-load("full_model_lay_mate_dec24_v2.RData")
-
 obs_lay_data <- dist.fid.df %>% filter(behavior=='ld')
 obs_mate_data <- dist.fid.df %>% filter(behavior=='ms')
 
