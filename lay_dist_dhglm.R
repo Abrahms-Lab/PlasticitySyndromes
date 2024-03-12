@@ -23,7 +23,7 @@ library(bayestestR)
 library(deming)
 
 # load data
-dist.fid.df <- read.csv("lay.dist.dhglm.df")
+lay.dist.df <- read.csv("lay.dist.dhglm.df")
 
 #############################
 # 1. Model definition
@@ -121,8 +121,8 @@ lay.dist.dhglm <- as.character("
 #############################
 # 2. Data prep and model fitting
 #############################
-obs_lay_data <- dist.fid.df %>% filter(behavior=='ld')
-obs_trip_data <- dist.fid.df %>% filter(behavior=='td')
+obs_lay_data <- lay.dist.df %>% filter(behavior=='ld')
+obs_trip_data <- lay.dist.df %>% filter(behavior=='td')
 
 # load data into variables
 mm <- c(rep(0,nrow(obs_lay_data)), rep(1,nrow(obs_trip_data)))
