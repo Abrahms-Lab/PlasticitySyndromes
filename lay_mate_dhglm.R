@@ -31,7 +31,7 @@ library(lme4)
 library(MuMIn)
 
 # load data
-dist.fid.df <- read.csv("lay.mate.dhglm.df")
+lay.mate.df <- read.csv("lay.mate.dhglm.df")
 LRS.df <- read_csv("LRS.df") 
 annualRS.df <- read_csv("annualRS.df") 
 
@@ -133,8 +133,8 @@ lay.mate.dhglm <- as.character("
 #############################
 # 2. Data prep and model fitting
 #############################
-obs_lay_data <- dist.fid.df %>% filter(behavior=='ld')
-obs_mate_data <- dist.fid.df %>% filter(behavior=='ms')
+obs_lay_data <- lay.mate.df %>% filter(behavior=='ld')
+obs_mate_data <- lay.mate.df %>% filter(behavior=='ms')
 
 mm <- c(rep(0,nrow(obs_lay_data)), rep(1,nrow(obs_mate_data)))
 y <- c(obs_lay_data$response, obs_mate_data$response)
