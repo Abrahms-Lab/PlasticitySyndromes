@@ -374,10 +374,11 @@ sam_rs_model_df$SAM_qual5 <- factor(sam_rs_model_df$SAM_qual5,levels = c("norm",
 b1_b2_df <- sam_rs_model_df %>%
   filter(has.data.b1&has.data.b2) %>%
   mutate(NFledged_01 = as.integer(NFledged>0),
-         b1_b2_Slope = CartToPol(b1_Slope.mean,b2_Slope.mean)$r)
+         b1_b2_Slope = CartToPol(b1_Slope.mean,b2_Slope.mean)$r,
+        center_year = Bookyear-median(Bookyear))
 
 # fit interaction model
-RS.fit_b1_b2 <- glmer(NFledged_01 ~ b1_b2_Slope + SAM_qual5 + b1_b2_Slope*SAM_qual5 +  (1|penguinseq),
+RS.fit_b1_b2 <- glmer(NFledged_01 ~ b1_b2_Slope + SAM_qual5 + b1_b2_Slope*SAM_qual5 + (1|center_year) + (1|penguinseq),
                       data=b1_b2_df,
                       family=binomial(link = "logit"),
                       control=glmerControl(optimizer = "bobyqa"))
