@@ -15,7 +15,7 @@
 library(rstan)
 library(mgcv)
 library(MASS)
-library(Matrix)
+library(effects)
 library(tidyverse)
 library(matrixStats)
 library(lubridate)
@@ -341,30 +341,25 @@ sam_rs_model_df <- left_join(annualRS.df,bird.Rand.abs_v2 %>%
                                    b2_Slope.sd,has.data.b1,has.data.b2),
                    by=c("penguinseq"="ID")) %>% 
   filter(has.data.b1,has.data.b2) %>%
-  mutate(NFledged_01 = as.integer(NFledged>0))
+  mutate(NFledged_01 = as.integer(NFledged>0),
+         center_year = Bookyear - median(Bookyear))
 
 # fit model with random effect for ID
-SAM_rs_glmer <- glmer(NFledged_01 ~ SAM_quant + (1|penguinseq),
+SAM_rs_glmer <- glmer(NFledged_01 ~ SAM_quant + (1|center_year) + (1|penguinseq),
                       data=sam_rs_model_df,
                       family=binomial(link = "logit"),
                       control=glmerControl(optimizer = "bobyqa"))
 summary(SAM_rs_glmer)
 
-# fit model without random effect for plotting
-SAM_RS_glm <- glm(NFledged_01 ~ SAM_quant,
-                  data=sam_rs_model_df,
-                  family=binomial(link = "logit"))
-summary(SAM_RS_glm)
-
 # plot model
-preds <- data.frame(SAM_quant = seq(-3, 3.5, length.out = 100))
-preds$pred <- predict(SAM_RS_glm, preds, type = "response")
-preds$upper <- predict(SAM_RS_glm, preds, type = "response", se.fit = TRUE)$fit + 1.96 * predict(SAM_RS_glm, preds, type = "response", se.fit = TRUE)$se.fit
-preds$lower <- predict(SAM_RS_glm, preds, type = "response", se.fit = TRUE)$fit - 1.96 * predict(SAM_RS_glm, preds, type = "response", se.fit = TRUE)$se.fit
-ggplot(sam_rs_model_df, aes(x = SAM_quant, y = NFledged_01)) +
-  geom_point(alpha = 0.2) +
-  geom_line(data = preds, aes(x = SAM_quant, y = pred), color = "black", inherit.aes = FALSE) +
-  geom_ribbon(data = preds, aes(x = SAM_quant, ymin = lower, ymax = upper), alpha = 0.2, inherit.aes = FALSE) +
+SAM_effect <- as.data.frame(effects::effect(term= "SAM_quant", 
+                          mod= SAM_rs_glmer, 
+                          xlevels = list(SAM_quant=seq(from=-2.5,to=3,by=.25))))
+
+ggplot() + 
+  geom_ribbon(data= SAM_effect, aes(x=SAM_quant, ymin=lower, ymax=upper), alpha= 0.2) +
+  geom_line(data=SAM_effect, aes(x=SAM_quant, y=fit), color="black") + xlim(-2.5,3) + 
+  geom_point(data = sam_rs_model_df, aes(x=SAM_quant,y=NFledged_01),alpha = 0.1) +
   theme_classic()
 
 ## interaction between plasticity and SAM
