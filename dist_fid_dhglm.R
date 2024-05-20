@@ -135,7 +135,7 @@ pengID <- as.numeric(factor(pengID, levels = unique(pengID)))
 center_yr_d <- c(obs_dist_data$center_year, rep(0,nrow(obs_fid_data)))
 center_year_f <- c(rep(0,nrow(obs_dist_data)), (obs_fid_data$center_year))
 sex_d <- c((obs_dist_data$sex=="M"), rep(0,nrow(obs_fid_data)))
-sex_f <- c(rep(0,nrow(obs_dist_data)), obs_fid_data$sex)
+sex_f <- c(rep(F,nrow(obs_dist_data)), obs_fid_data$sex=="TRUE")
 K <- 6
 N_peng <- max(pengID)
 N_obs <- length(y)

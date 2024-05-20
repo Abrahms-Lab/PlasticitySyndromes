@@ -139,7 +139,7 @@ obs_mate_data <- lay.mate.df %>% filter(behavior=='ms')
 mm <- c(rep(0,nrow(obs_lay_data)), rep(1,nrow(obs_mate_data)))
 y <- c(obs_lay_data$response, obs_mate_data$response)
 sam <- c(obs_lay_data$zscore_SAM, rep(0,nrow(obs_mate_data)))
-rain <- c(rep(0,nrow(obs_lay_data)), (obs_mate_data$log_rain_per_day))
+rain <- c(rep(0,nrow(obs_lay_data)), (obs_mate_data$log_rain))
 yr.orig <- c(obs_lay_data$center_year, obs_mate_data$center_year)
 yrID <- as.numeric(as.factor(yr.orig))
 N_yr <- length(unique(yrID))
@@ -164,7 +164,7 @@ niter = 4000          # Total number of iterations
 nperm <- niter-nwarm   # Number of estimation iterations
 
 # fit model
-bimod.data.real <- stan(model_code = m_lay.sam.Ryr.Rbird.Rsam_mate.Ryr.Rbird.Rrain, 
+bimod.data.real <- stan(model_code = lay.mate.dhglm, 
                         data = mod.in, 
                         chains = nchain, warmup = nwarm, iter = niter,
                         cores = 4, verbose = FALSE, refresh=50)
@@ -324,7 +324,7 @@ summary(lrs_model)
 # plot model
 newx = seq(-1,4,by = 0.05)
 conf_interval <- predict(lrs_model, newdata=data.frame(joint_slope=newx), interval="confidence",
-                         level = 0.95)
+                         level = 0.89)
 ggplot() +
   geom_point(data=lrs_model_df,aes(joint_slope,f_yr),alpha=.5,stroke=0) +
   geom_ribbon(aes(newx, ymin=conf_interval[,2], ymax=conf_interval[,3]),alpha=.3) + 
@@ -354,6 +354,7 @@ summary(SAM_rs_glmer)
 # plot model
 SAM_effect <- as.data.frame(effects::effect(term= "SAM_quant", 
                           mod= SAM_rs_glmer, 
+                          se=list(level=0.89),
                           xlevels = list(SAM_quant=seq(from=-2.5,to=3,by=.25))))
 
 ggplot() + 
@@ -385,6 +386,7 @@ interact_plot(RS.fit_b1_b2,
               modx = SAM_qual5, 
               modxvals = c("low"),
               interval = T,
+              int.width = 0.89,
               plot.points = T, colors = "#009988") +
   theme_classic() + ylab("Successful Fledging") + xlab("Plasticity")+ theme(legend.position = "none") +
   xlim(.4,2.5)
@@ -393,6 +395,7 @@ interact_plot(RS.fit_b1_b2,
               modx = SAM_qual5, 
               modxvals = c("norm"),
               interval = T,
+              int.width = 0.89,
               plot.points = T, colors = "#33bbee") +
   theme_classic() + ylab("Successful Fledging") + xlab("Plasticity")+ theme(legend.position = "none")+
   xlim(.4,2.5)
@@ -401,6 +404,7 @@ interact_plot(RS.fit_b1_b2,
               modx = SAM_qual5, 
               modxvals = c("high"),
               interval = T,
+              int.width = 0.89,
               plot.points = T, colors = "#ee3377") +
   theme_classic() + ylab("Successful Fledging") + xlab("Plasticity") + theme(legend.position = "none")+
   xlim(.4,2.5)
